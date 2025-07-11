@@ -1,0 +1,9 @@
+streamlit
+openai
+pandas
+pdfplumber
+PyMuPDF
+reportlab
+sendgrid
+python-dotenv
+pillow
