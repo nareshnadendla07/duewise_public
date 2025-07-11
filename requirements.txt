@@ -7,3 +7,5 @@ reportlab
 sendgrid
 python-dotenv
 pillow
+bs4
+pytesseract
