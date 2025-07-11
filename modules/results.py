@@ -1,11 +1,15 @@
-from openai import OpenAI
+import openai
 import streamlit as st
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # ✅ This must be at the top!
+# Load local .env for dev
+if os.path.exists(".env"):
+    load_dotenv()
 
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+# Set OpenAI key from Streamlit secrets or env
+openai.api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+
 
 def generate_financial_verdict(metrics):
     prompt = f"""
@@ -26,14 +30,15 @@ def generate_financial_verdict(metrics):
     3. 2-3 suggestions for improvement or action
     """
 
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You're a financial due diligence assistant."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.4,
-        max_tokens=500
-    )
+    response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "You're a financial due diligence assistant."},
+        {"role": "user", "content": prompt}
+    ],
+    temperature=0.4,
+    max_tokens=500
+)
+
 
     return response.choices[0].message.content
