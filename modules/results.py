@@ -3,13 +3,12 @@ import streamlit as st
 import os
 from dotenv import load_dotenv
 
-# Load local .env for dev
+# Load .env locally if present
 if os.path.exists(".env"):
     load_dotenv()
 
-# Set OpenAI key from Streamlit secrets or env
+# Set API key (from secrets or env)
 openai.api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
-
 
 def generate_financial_verdict(metrics):
     prompt = f"""
@@ -30,15 +29,18 @@ def generate_financial_verdict(metrics):
     3. 2-3 suggestions for improvement or action
     """
 
-    response = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    messages=[
-        {"role": "system", "content": "You're a financial due diligence assistant."},
-        {"role": "user", "content": prompt}
-    ],
-    temperature=0.4,
-    max_tokens=500
-)
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You're a financial due diligence assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.4,
+            max_tokens=500
+        )
+        return response.choices[0].message.content
 
-
-    return response.choices[0].message.content
+    except Exception as e:
+        st.error(f"❌ Failed to generate verdict: {e}")
+        return "Unable to generate financial verdict at this time."
