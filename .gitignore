@@ -1,6 +1,0 @@
-myenv/
-.env
-.streamlit/secrets.toml
-*.pyc
-__pycache__/
-.DS_Store
